@@ -41,7 +41,7 @@ app.use(passport.session());
 main().catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect("mongodb://localhost:27017/secretsDB");
+  await mongoose.connect("mongodb+srv://"+process.env.MONGO+"@todolist.nnosv2i.mongodb.net/toDoListDB");
 }
 
 const userSchema = new mongoose.Schema({
@@ -74,7 +74,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/secrets",
+      callbackURL: "http://good-ruby-vest.cyclic.app/auth/google/secrets",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     function (accessToken, refreshToken, profile, cb) {
