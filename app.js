@@ -41,13 +41,13 @@ app.use(passport.session());
 main().catch((err) => console.log(err));
 
 async function main() {
-  await mongoose.connect("mongodb://localhost:27017/usersDB");
+  await mongoose.connect("mongodb://localhost:27017/secretsDB");
 }
 
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  secret: String,
+  secret: [String],
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -121,7 +121,7 @@ app.post(
   "/login",
   passport.authenticate("local", { failureRedirect: "/login" }),
   (req, res) => {
-    res.redirect("/secrets");
+    res.redirect("/home");
 
     // bCrypt usage for hashing and salting
 
@@ -149,7 +149,7 @@ app.post("/submit", (req, res) => {
   const submittedSecret = req.body.secret;
 
   User.findById({ _id: req.user._id }).then((foundUser) => {
-    foundUser.secret = submittedSecret;
+    foundUser.secret.push(submittedSecret);
     foundUser.save().then(() => {
       res.redirect("/secrets");
     });
@@ -200,10 +200,10 @@ app.get("/logout", (req, res) => {
 });
 
 // Granting authentication to allow access to certain parts of Google profile
-app.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile"] })
-);
+app.get('/auth/google',
+  passport.authenticate('google', { scope:
+      [ 'email', 'profile' ] }
+));
 
 //Redirecting site to secrets page after being authenticated
 app.get(
