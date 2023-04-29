@@ -11,16 +11,6 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
-// bCrypt usage
-// const bcrypt = require("bcrypt");
-// const saltRounds = 10;
-
-// Require mongoose-encryption:
-// const encrypt = require("mongoose-encryption");
-
-// Require md5
-// const md5 = require("md5");
-
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
@@ -52,9 +42,6 @@ const userSchema = new mongoose.Schema({
 
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
-
-// Line of code for using mongoose-encryption with env variables in the .env file:
-// userSchema.plugin(encrypt, {secret: process.env.SECRET, encryptedFields: ["password"]});
 
 const User = mongoose.model("User", userSchema);
 
@@ -101,19 +88,6 @@ app.post("/register", (req, res) => {
       }
     }
   );
-
-  // bCrypt usage for hashing and salting
-
-  // bcrypt.hash(req.body.registerPass, saltRounds, function(err, hash) {
-  //     const newUser = new User({
-  //         email: req.body.registerEmail,
-  //         password: hash
-  //                             // Standard call: req.body.registerPass
-  //                             // MD5 conversion: password: md5(req.body.registerPass)
-  //     });
-  //     newUser.save();
-  //     res.render("secrets");
-  // });
 });
 
 // Authenticate user during login (using passport). If error, redirect to login
@@ -122,25 +96,6 @@ app.post(
   passport.authenticate("local", { failureRedirect: "/login" }),
   (req, res) => {
     res.redirect("/home");
-
-    // bCrypt usage for hashing and salting
-
-    // User.findOne({email: req.body.loginEmail})
-    // .then((results)=>{
-    //     bcrypt.compare(req.body.loginPass, results.password, function(err, result) {
-    //         if(result === true)                             //MD5 conversion: md5(req.body.loginPass))
-    //         {
-    //             res.render("secrets");
-    //         }
-    //         else
-    //         {
-    //             console.log(err);
-    //         }
-    //     });
-    // })
-    // .catch((err) =>{
-    //     console.log("No user found \n"+err);
-    // })
   }
 );
 
@@ -180,13 +135,6 @@ app.get("/secrets", (req, res) => {
   } else {
     res.redirect("/login");
   }
-  // If you don't want to login to see secrets:
-  // User.find({secret: {$ne: null}}).then((foundUsers) =>{
-  //     if(foundUsers)
-  //     {
-  //         res.render("secrets", {usersWithSecrets: foundUsers});
-  //     }
-  // });
 });
 
 // Logging user out
